@@ -17,13 +17,28 @@ let g:loaded_perldocsearch = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-if !exists('PerldocOpenQuickfixWindow')
-    let g:PerldocOpenQuickfixWindow = 1
+if !exists('PerldocSearch_Cmd')
+    let g:PerldocSearch_Cmd = 1
 end
 
+if !exists('PerldocSearch_OpenQuickfixWindow')
+    let g:PerldocSearch_OpenQuickfixWindow = 1
+end
+
+if !exists('PerldocSearch_Cmd')
+    if executable('podsearch')
+        let PerldocSearch_Cmd = 'podsearch'
+    else
+        echomsg 'podsearch is not found in PATH. Plugin is not loaded.'
+        " Skip loading the plugin
+        let loaded_perldocsearch = 0
+        let &cpo = s:cpo_save
+        finish
+    endif
+endif
 
 function! s:PerldocSearch(...)
-    let args = [ 'podsearch' ]
+    let args = [ g:PerldocSearch_Cmd ]
     let args += a:000
     let cmd_output =  system(join(args, ' '))
 
@@ -42,7 +57,7 @@ function! s:PerldocSearch(...)
 
     let &efm = old_efm
 
-    if g:PerldocOpenQuickfixWindow == 1
+    if g:PerldocSearch_OpenQuickfixWindow == 1
         botright copen
     endif
 
@@ -52,6 +67,7 @@ endfunction
 
 command! -nargs=* -complete=file PerldocSearch :call s:PerldocSearch(<f-args>)
 
+"restore cpo
 let &cpo = s:save_cpo
 unlet s:save_cpo
 
