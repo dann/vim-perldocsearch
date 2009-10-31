@@ -9,7 +9,7 @@
 "   How to Use
 "     :PerldocSearch coerce -G Moose
 
-if exists("g:loaded_perldocsearch")
+if exists("g:loaded_perldocsearch") || v:version < 700
     finish
 endif
 let g:loaded_perldocsearch = 1
@@ -38,14 +38,31 @@ if !exists('PerldocSearch_Cmd')
     endif
 endif
 
-function! s:PerldocSearch(...)
-    let args = [ g:PerldocSearch_Cmd ]
-    let args += a:000
-    let cmd_output =  system(join(args, ' '))
+" ----------------------------------------------------------------------------
+"  constructor
+" ----------------------------------------------------------------------------
+let s:PerldocSearcher = {}
 
+function! s:PerldocSearcher.new(args)
+  let obj = extend({}, self)
+  return obj
+endfunction
+
+" ----------------------------------------------------------------------------
+" search pods with a word
+" ----------------------------------------------------------------------------
+function! s:PerldocSearcher.search(args)
+    let matched_pods = self.search_from_pod(a:args);
+    self.show_matched_pods(matched_pods)
+endfunction
+
+" ----------------------------------------------------------------------------
+"  show pods
+" ----------------------------------------------------------------------------
+function! s:PerldocSearcher.show_matched_pods(matched_pods)
     let tmpfile = tempname()
     exe "redir! > " . tmpfile
-    silent echon cmd_output
+    silent echon a:matched_pods
     redir END
     let old_efm = &efm
 
@@ -63,7 +80,25 @@ function! s:PerldocSearch(...)
     endif
 
     call delete(tmpfile)
+endfunction
 
+
+" ----------------------------------------------------------------------------
+" search pods with podsearch
+" ----------------------------------------------------------------------------
+function! s:PerldocSearcher.search_from_pod(args)
+    let command = [ g:PerldocSearch_Cmd ]
+    let command += a:args
+    let cmd_output =  system(join(command, ' '))
+    return cmd_output
+endfunction
+
+" ----------------------------------------------------------------------------
+" main function 
+" ----------------------------------------------------------------------------
+function! s:PerldocSearch(...)
+    let searcher = s:PerldocSearcher.new();
+    searcher.search(a:000)
 endfunction
 
 command! -nargs=* -complete=file PerldocSearch :call s:PerldocSearch(<f-args>)
