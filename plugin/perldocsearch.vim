@@ -32,7 +32,8 @@ if !exists('PerldocSearch_Cmd')
         echomsg 'podsearch is not found in PATH. Plugin is not loaded.'
         " Skip loading the plugin
         let loaded_perldocsearch = 0
-        let &cpo = s:cpo_save
+        let &cpo = s:save_cpo
+        unlet s:save_cpo
         finish
     endif
 endif
