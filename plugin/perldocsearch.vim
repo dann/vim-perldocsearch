@@ -14,9 +14,13 @@ if exists("g:loaded_perldocsearch")
 endif
 let g:loaded_perldocsearch = 1
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 if !exists('PerldocOpenQuickfixWindow')
     let g:PerldocOpenQuickfixWindow = 1
 end
+
 
 function! s:PerldocSearch(...)
     let args = [ 'podsearch' ]
@@ -47,5 +51,8 @@ function! s:PerldocSearch(...)
 endfunction
 
 command! -nargs=* -complete=file PerldocSearch :call s:PerldocSearch(<f-args>)
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
 " vim: ft=vim
