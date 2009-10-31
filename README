@@ -1,0 +1,15 @@
+" perldocsearch.vim
+"
+" Author: Takatoshi Kitano
+" Version: 0.01 for Vim 7.1
+" Last Change:  2009/10/31
+" Licence: MIT Licence
+"
+" How to install
+"   install perdocsearch.vim into ~/.vim/plugin directory.
+"   locate bin/podsearch in the PAHT
+"
+" Description:
+"   How to Use
+"     :PerldocSearch coerce -G Moose
+

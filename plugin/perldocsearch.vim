@@ -19,7 +19,7 @@ if !exists('PerldocOpenQuickfixWindow')
 end
 
 function! s:PerldocSearch(...)
-    let args = [ 'perldoc-search' ]
+    let args = [ 'podsearch' ]
     let args += a:000
     let cmd_output =  system(join(args, ' '))
 
@@ -27,12 +27,9 @@ function! s:PerldocSearch(...)
     exe "redir! > " . tmpfile
     silent echon cmd_output
     redir END
-
     let old_efm = &efm
 
-    "TODO does quicklist have click event handler?
-    setlocal efm=%f\ \-\ %m
-
+    setlocal efm=%f:%m
     if exists(":cgetfile")
         execute "silent! cgetfile " . tmpfile
     else
@@ -50,3 +47,5 @@ function! s:PerldocSearch(...)
 endfunction
 
 command! -nargs=* -complete=file PerldocSearch :call s:PerldocSearch(<f-args>)
+
+" vim: ft=vim
